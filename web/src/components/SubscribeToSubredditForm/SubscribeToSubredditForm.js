@@ -39,7 +39,7 @@ class SubscribeToSubredditForm extends React.Component {
         <label>
           <input id="subreddit-input-box" type="text" value={this.state.value} onChange={this.handleChange} placeholder="Add Subreddit" />
         </label>
-        <input type="submit" value="Add" />
+        <input id="subreddit-submit-button" type="submit" value="Add" />
       </form>
     );
   }

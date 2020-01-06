@@ -5,21 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <style>
+      html {
+        margin:0;
+        padding:0;
+        max-height:100vh;
+        overflow:hidden;
+      }
       body {
-        min-width: 100vw;
-        min-height: 100vh;
+        /* min-width: 100vw;
+        min-height: 100vh; */
         margin: 0;
+        border: 1px solid transparent;
+        font-family: monospace;
       }
       #root {
-        min-width: 100%;
-        min-height: 100%;
+        /* min-width: 100vw;
+        min-height: 100vh; */
+        margin: 0;
       }
       #app-wrapper {
-        min-width: 100%;
-        min-height: 100%;
+        /* min-width: 100vw;
+        min-height: 100vh; */
+        margin: 0;
       }
       #sideBar {
-        min-width: 21.5vw;
         max-height: 70%;
         padding-left: 4.01vh;
         padding-right: 6vh;
@@ -28,14 +37,18 @@
           font-family: monospace;
           font-size: 2.53vh;
           height: 5vh;
-          max-width: 26vh;
+          min-width: 30.5vh;
           padding-top: 0vh;
           padding-left: 1.12vh;
           padding-bottom: 0vh;
         }
+        #subreddit-submit-button {
+          min-width: 7vh;
+        }
         form {
-          width: max-content;
-          display: inline-flex
+          width: 100%;
+          display: inline-flex;
+          margin-bottom: 0vh;
         }
         input {
           font-family: monospace;
@@ -46,10 +59,33 @@
         }
         ::placeholder { /* Chrome/Opera/Safari */
         }
-
+        #subreddit-list {
+          padding-inline-start: 0vh;
+          margin: 0vh;
+          max-height: 69vh;
+          overflow: scroll;
+        }
+        li {
+          display: block;
+          font-size: 1.9vh;
+          border: solid;
+          border-width: 0.1vh;
+          padding: 2vh;
+        }
+      #graph-subreddit-name-title {
+        font-size: 3vh;
+        text-decoration: underline;
+        text-underline-position: under;
+        /* padding-left: 9vh; */
+        padding-bottom: 2vh;
+      }
       #graph-wrapper {
         width: 67vw;
         height: 74vh;
+      }
+      #graph {
+        border: solid;
+        height: 68.3vh;
       }
 
     </style>

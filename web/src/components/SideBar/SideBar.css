@@ -1,26 +1,13 @@
 
-
-
-
 .subredditSelectorGroup {
   border-style: solid;
   border-width: 0.2vh;
   height: 74%;
-  min-width: 100%;
-  width: max-content;
-}
-
-ul {
-  padding-left: 2vh;
-  margin-block-start: -1vh;
-  overflow: scroll;
+  /* min-width: 21vw; */
 }
 
 li {
-  display: unset;
-  font-size: 4vh;
+  /* display: block; */
+  /* font-size: 4vh; */
   font-family: monospace;
-  border-style: solid;
-  border-width: 0.2vh;
-  padding: 1.3vh;
 }

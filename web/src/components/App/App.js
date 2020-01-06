@@ -13,10 +13,12 @@ class App extends React.Component {
      "subreddits" : {},
      "selectedSubreddit": ""
    }
+
+   this.loadSubredditsData = this.loadSubredditsData.bind(this);
   }
 
-  async componentDidMount(){
-    const response = await fetch("http://localhost:5000/developmental/get_subreddit_submissions/50", {
+  async loadSubredditsData(){
+      const response = await fetch("http://localhost:5000/developmental/get_subreddit_submissions/2", {
       method: 'GET',
       // mode: 'cors',
       cache: 'no-cache',
@@ -41,6 +43,11 @@ class App extends React.Component {
 
     this.setState( newState );
 
+  };
+
+  componentDidMount(){
+    this.loadSubredditsData();
+    setInterval( this.loadSubredditsData, 1000*60 );
   }
 
 
