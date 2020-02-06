@@ -45,12 +45,20 @@ class GraphWrapper extends React.Component {
           x: 'time',
           y: 'upvotes',
           color: 'title', // there will be two lines with different colors on the chart
+          guide: {
+            x: {
+              label: { "text":"Time"}
+            },
+            y: {
+              label: {"text":"Upvotes"}
+            }
+          },
           plugins: [
             tauCharts.api.plugins.get('tooltip')({
               // will see only name and age on tooltip
               fields: ['title', "upvotes", "time"]
             }),
-            tauCharts.api.plugins.get('legend')
+            // tauCharts.api.plugins.get('legend')
           ]
         });
 

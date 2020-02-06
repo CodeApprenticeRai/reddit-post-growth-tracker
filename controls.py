@@ -117,7 +117,7 @@ def get_submission_recorded_statistics( db_connection, submission_id ):
         each subreddit has a dict of submissions
         each submission has a time_series of it's recorded historical values
 '''
-def get_subreddit_submission_time_series(db_connection, number_of_submissions=-1): # bad function name
+def get_subreddit_submission_time_series(db_connection=sqlite3.connect("./db/data.db"), number_of_submissions=-1): # bad function name
     # for each subreddit in the database ( get subreddits from database )
     subscribed_subreddits = { subreddit_name : {} for subreddit_name in  get_subscribed_subreddits(db_connection) }
 

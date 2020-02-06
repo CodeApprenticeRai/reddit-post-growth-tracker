@@ -4,8 +4,6 @@ import ReactDOM from 'react-dom';
 class List extends React.Component {
   constructor(props) {
    super(props);
-
-
   }
 
   render() {
@@ -13,8 +11,12 @@ class List extends React.Component {
       return( <li key={key}>{key}</li> );
     });
 
+    // let test_subredditNamesList = [ "AskReddit", "unpopularopinions", "AmITheAsshole", "AskMen", "ShowerThoughts", "AskReddit", "unpopularopinions", "AmITheAsshole", "AskMen", "AskReddit", "unpopularopinions", "AmITheAsshole", "AskMen", "ShowerThoughts", "AskReddit", "unpopularopinions", "AmITheAsshole", "AskMen"].map( (key, index) => {
+    //   return( <li key={key}>{key}</li> );
+    // });
+
     return (
-      <ul>
+      <ul id="subreddit-list">
         { subredditNamesList }
       </ul>
     );

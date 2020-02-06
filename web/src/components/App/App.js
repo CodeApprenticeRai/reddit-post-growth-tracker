@@ -18,7 +18,7 @@ class App extends React.Component {
   }
 
   async loadSubredditsData(){
-      const response = await fetch("http://localhost:5000/developmental/get_subreddit_submissions/2", {
+      const response = await fetch("http://localhost:5000/developmental/get_subreddit_submissions/300", {
       method: 'GET',
       // mode: 'cors',
       cache: 'no-cache',
