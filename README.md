@@ -1,6 +1,7 @@
 # reddit-post-growth-tracker
 Tracks how reddit posts grow over time
 
+![Demo of UI](ui.png)
 
 #### Objectives
 * Add a modal that gets displayed on first visit that explains the sites purpose ina cool non-obtrusive way.
