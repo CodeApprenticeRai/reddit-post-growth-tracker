@@ -29,7 +29,7 @@ import threading
 # non-blocking function scheduler
 # credit: https://stackoverflow.com/a/48709380/6318046
 class setInterval:
-    def __init__(self, interval, action) :
+    def __init__(self, action, interval) :
         self.interval = interval
         self.action = action
         self.stop_event = threading.Event()
@@ -50,6 +50,8 @@ class App:
         self.DATABASE_PATH = "./data.db"
         self.reddit_client = self.get_reddit_client()
         self.db_connection = self.get_db_connection()
+        setInterval( self.register_new_submissions, 30)
+        setInterval( self.record_submission_statistics, 60)
         return None
 
     '''
@@ -110,20 +112,28 @@ class App:
     * For every registered submission: record current (upvotes, downvotes, num_comments)
     '''
     def record_submissions_statistics(self):
+        self.zero_time = time.time()
         registered_submissions = self.get_registered_submissions()
 
         submission_records_to_insert = []
+
+        # !! costly for loop,
+        # and get's more costly as the number of registered
+        # submissions increase.
         for submission_record in registered_submissions:
+            print( time.time() - self.zero_time )
             submission = self.reddit_client.submission(id=submission_record[0])
             current_time = int(time.time())
-            submission_downvotes = int((submission.upvotes/ submission.upvote_ratio) - submission.upvotes) # :(
-            submission_stat_record = (current_time, submission.id, submission.upvotes, submission_downvotes, submission.num_comments )
+            submission_downvotes = int((submission.score/ submission.upvote_ratio) - submission.score) # :(
+            submission_stat_record = (current_time, submission.id, submission.score, submission_downvotes, submission.num_comments )
             submission_records_to_insert.append(submission_stat_record)
 
+        print( time.time() - self.zero_time )
         register_new_submission_sql_string = "INSERT or IGNORE INTO submission_records VALUES (?, ?, ?, ?, ?)"
         cursor = self.db_connection.cursor()
-        cursor.executemany( record_submission_statistics_sql_string, submission_records_to_insert )
-        db_connection.commit()
+        cursor.executemany( register_new_submission_sql_string, submission_records_to_insert )
+        self.db_connection.commit()
+        print( time.time() - self.zero_time )
         return None
 
     def get_registered_submissions(self):
@@ -140,5 +150,3 @@ class App:
 
 if __name__ == "__main__":
     app = App()
-    # app.register_new_submissions()
-    # app.record_submission_statistics()
