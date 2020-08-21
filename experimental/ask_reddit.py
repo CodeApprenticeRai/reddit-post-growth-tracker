@@ -28,16 +28,25 @@ import os
 class App:
     def __init__(self):
         self.DATABASE_PATH = "./data.db"
-        self.reddit_client = None
+        self.reddit_client = self.get_reddit_client()
         self.db_connection = self.get_db_connection()
+        return None
 
-        with open('./config.json') as config:
-            config = json.load(config)
-            reddit_client = praw.Reddit(
-                client_id=config["client_id"],
-                client_secret=config["client_secret"],
-                user_agent=config["user_agent"]
-        )
+    '''
+    Load reddit praw client
+    '''
+    def get_reddit_client(self):
+        try:
+            with open('../config.json') as config:
+                config = json.load(config)
+                reddit_client = praw.Reddit(
+                    client_id=config["client_id"],
+                    client_secret=config["client_secret"],
+                    user_agent=config["user_agent"]
+                )
+                return reddit_client
+        except:
+            raise FileNotFoundError("Couldn't find config file necessary to load PRAW configuration.")
 
     '''
     Create tables: (submissions, submisison_records) if not
@@ -66,6 +75,8 @@ class App:
     Spec-Thoughts:
 
     '''
+    def register_new_submissions(self):
+        raise NotImplementedError
 
     # Close db connection on destruction ( does not cause issues if absence )
     def __del__(self):
