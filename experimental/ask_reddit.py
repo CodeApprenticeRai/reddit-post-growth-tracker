@@ -94,22 +94,44 @@ class App:
     * Register every new submission as soon as it is posted
     '''
     def register_new_submissions(self):
-        register_new_submission_sql_string = "INSERT or IGNORE INTO subscribed_submissions VALUES (?, ?)"
+        register_new_submission_sql_string = "INSERT or IGNORE INTO submissions VALUES (?, ?, ?)"
         new_rows_to_insert = []
         subreddit = self.reddit_client.subreddit('AskReddit')
         for submission in subreddit.new():
             new_submission = ( submission.id, submission.title, submission.created_utc )
             new_rows_to_insert.append( new_submission )
 
+        cursor = self.db_connection.cursor()
         cursor.executemany( register_new_submission_sql_string, new_rows_to_insert )
-        db_connection.commit()
+        self.db_connection.commit()
         return None
 
     '''
+    * For every registered submission: record current (upvotes, downvotes, num_comments)
     '''
-    def record_submissions_stats(self):
-        raise NotImplementedError
-        
+    def record_submissions_statistics(self):
+        registered_submissions = self.get_registered_submissions()
+
+        submission_records_to_insert = []
+        for submission_record in registered_submissions:
+            submission = self.reddit_client.submission(id=submission_record[0])
+            current_time = int(time.time())
+            submission_downvotes = int((submission.upvotes/ submission.upvote_ratio) - submission.upvotes) # :(
+            submission_stat_record = (current_time, submission.id, submission.upvotes, submission_downvotes, submission.num_comments )
+            submission_records_to_insert.append(submission_stat_record)
+
+        register_new_submission_sql_string = "INSERT or IGNORE INTO submission_records VALUES (?, ?, ?, ?, ?)"
+        cursor = self.db_connection.cursor()
+        cursor.executemany( record_submission_statistics_sql_string, submission_records_to_insert )
+        db_connection.commit()
+        return None
+
+    def get_registered_submissions(self):
+        cursor = self.db_connection.cursor()
+        cursor.execute( 'SELECT id from submissions' )
+        submission_rows = cursor.fetchall()
+        return submission_rows
+
     # Close db connection on destruction ( does not cause issues if absence )
     def __del__(self):
         self.db_connection.close()
@@ -118,4 +140,5 @@ class App:
 
 if __name__ == "__main__":
     app = App()
-    app.register_new_submissions()
+    # app.register_new_submissions()
+    # app.record_submission_statistics()
