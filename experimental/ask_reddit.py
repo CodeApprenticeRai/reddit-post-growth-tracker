@@ -69,6 +69,7 @@ class App:
         return db_connection
 
 
+
     '''
     * Register every new submission as soon as it is posted
 
