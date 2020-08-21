@@ -29,8 +29,8 @@ import threading
 # non-blocking function scheduler
 # credit: https://stackoverflow.com/a/48709380/6318046
 class setInterval:
+    def __init__(self, interval, action) :
         self.interval = interval
-        def __init__(self, interval, action) :
         self.action = action
         self.stop_event = threading.Event()
         thread= threading.Thread(target=self.__setInterval)
@@ -79,8 +79,8 @@ class App:
     def get_db_connection(self):
         db_connection = sqlite3.connect("./data.db")
 
-        create_subscribed_submissions_table_sql_string = "CREATE TABLE IF NOT EXISTS submissions ( id TEXT PRIMARY KEY, submission_title TEXT, created_utc INTEGER NOT NULL,  )";
-        create_submission_records_table_sql_string = "CREATE TABLE IF NOT EXISTS submission_records ( time INTEGER NOT NULL, submission_id TEXT NOT NULL, upvotes INTEGER NOT NULL, downvotes INTEGER NOT NULL, num_comments INTEGER NOT NULL, PRIMARY KEY (time, id) )";
+        create_subscribed_submissions_table_sql_string = "CREATE TABLE IF NOT EXISTS submissions ( id TEXT PRIMARY KEY, submission_title TEXT, created_utc INTEGER NOT NULL );"
+        create_submission_records_table_sql_string = "CREATE TABLE IF NOT EXISTS submission_records ( time INTEGER NOT NULL, submission_id TEXT NOT NULL, upvotes INTEGER NOT NULL, downvotes INTEGER NOT NULL, num_comments INTEGER NOT NULL, PRIMARY KEY (time, submission_id) );"
 
         cursor = db_connection.cursor()
         cursor.execute( create_subscribed_submissions_table_sql_string )
@@ -92,13 +92,30 @@ class App:
 
     '''
     * Register every new submission as soon as it is posted
-
-    Spec-Thoughts:
     '''
     def register_new_submissions(self):
-        raise NotImplementedError
+        register_new_submission_sql_string = "INSERT or IGNORE INTO subscribed_submissions VALUES (?, ?)"
+        new_rows_to_insert = []
+        subreddit = self.reddit_client.subreddit('AskReddit')
+        for submission in subreddit.new():
+            new_submission = ( submission.id, submission.title, submission.created_utc )
+            new_rows_to_insert.append( new_submission )
 
+        cursor.executemany( register_new_submission_sql_string, new_rows_to_insert )
+        db_connection.commit()
+        return None
+
+    '''
+    '''
+    def record_submissions_stats(self):
+        raise NotImplementedError
+        
     # Close db connection on destruction ( does not cause issues if absence )
     def __del__(self):
         self.db_connection.close()
         return None
+
+
+if __name__ == "__main__":
+    app = App()
+    app.register_new_submissions()
