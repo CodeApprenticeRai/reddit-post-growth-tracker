@@ -51,7 +51,7 @@ class App:
         self.reddit_client = self.get_reddit_client()
         self.db_connection = self.get_db_connection()
         setInterval( self.register_new_submissions, 30)
-        setInterval( self.record_submission_statistics, 60)
+        setInterval( self.record_submissions_statistics, 60)
         return None
 
     '''
