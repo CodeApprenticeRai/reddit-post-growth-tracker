@@ -23,7 +23,27 @@ import json
 import praw
 import time
 import os
+import threading
 
+
+# non-blocking function scheduler
+# credit: https://stackoverflow.com/a/48709380/6318046
+class setInterval:
+        self.interval = interval
+        def __init__(self, interval, action) :
+        self.action = action
+        self.stop_event = threading.Event()
+        thread= threading.Thread(target=self.__setInterval)
+        thread.start()
+
+    def __setInterval(self):
+        nextTime = time.time() + self.interval
+        while not self.stop_event.wait(nextTime-time.time()) :
+            nextTime+=self.interval
+            self.action()
+
+    def cancel(self) :
+        self.stop_event.set()
 
 class App:
     def __init__(self):
@@ -48,6 +68,7 @@ class App:
         except:
             raise FileNotFoundError("Couldn't find config file necessary to load PRAW configuration.")
 
+
     '''
     Create tables: (submissions, submisison_records) if not
     exists, returns db_connection
@@ -69,12 +90,10 @@ class App:
         return db_connection
 
 
-
     '''
     * Register every new submission as soon as it is posted
 
     Spec-Thoughts:
-
     '''
     def register_new_submissions(self):
         raise NotImplementedError
