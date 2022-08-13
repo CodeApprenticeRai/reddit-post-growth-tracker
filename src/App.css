@@ -1,0 +1,20 @@
+.App {
+    padding-left: 6vw;
+}
+
+.pageTitle {
+    font-family: monospace;
+    font-size: 5vh;
+    min-width: 100vw;
+    padding-bottom: 3vh;
+    /* padding-left: 3.2vw; */
+    padding-top: 3.2vh;
+    /* max-width: 32vw; */
+}
+
+/* .mainContent {
+    min-width: 100vh;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: row;
+} */

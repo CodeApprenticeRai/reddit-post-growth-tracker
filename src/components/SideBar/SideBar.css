@@ -1,0 +1,12 @@
+.subredditSelectorGroup {
+    border-style: solid;
+    border-width: 0.2vh;
+    height: 78%;
+    /* min-width: 21vw; */
+  }
+  
+li {
+    /* display: block; */
+    /* font-size: 4vh; */
+    font-family: monospace;
+}

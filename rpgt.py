@@ -1,11 +1,12 @@
 import datetime
 import sqlite3
 import json
+import sys
 import time
 import praw
 import asyncio
 
-class App:
+class RPGT:
     def __init__(self, use_command_line=False):
         self.use_command_line = use_command_line
         self.DATABASE_PATH = "./data.db"
@@ -47,7 +48,7 @@ class App:
 
 
     def initialize_database(self):
-        self.db_connection = sqlite3.connect(self.DATABASE_PATH)
+        self.db_connection = sqlite3.connect(self.DATABASE_PATH, check_same_thread=False )
 
         cursor = self.db_connection.cursor()
         cursor.execute( self.SQL["create_subreddts_table_sql_string"] )
@@ -170,7 +171,10 @@ class App:
     def update_submissions_subscribed_to(self):
         # async process 1: check for new submissions and add
         #   each new submission to the table submissions_subscribed_to 
+        self.subreddits_cache = set([ subreddit_display_name for subreddit_id, subreddit_display_name in  self.get_subreddits_subscribed_to()])
+
         submissions_to_be_added = []
+        print("Updating submissions subscribed to...")
         for subreddit_display_name in self.subreddits_cache:
             subreddit_object = self.reddit_client.subreddit(display_name=subreddit_display_name)
             for submission in subreddit_object.new(limit=50):
@@ -186,13 +190,22 @@ class App:
 
     def update_submission_records(self):
         # async process 2: record the state of each submission subscribed to
+        self.submissions_cache = set([ submission_id for submission_id, subreddit_display_name, submission_title in self.get_submissions_subscribed_to() ])
+        
         submission_records_to_be_added = []
+        print("Updating submission records...")
+        print("Length of submissions_cache: {}".format(len(self.submissions_cache)))
+
+        update_start_time = time.time()
         for submission_id in self.submissions_cache:
             submission_object = self.reddit_client.submission(id=submission_id)
             new_submission_record = (int(time.time()), submission_id, submission_object.score)
             submission_records_to_be_added.append(new_submission_record)
-        print("submission records to be added: {}".format(submission_records_to_be_added))
+        update_time_taken = time.time() - update_start_time
+        print("Update time taken: {}".format(update_time_taken))
+        # print("submission records to be added: {}".format(submission_records_to_be_added))
         self.insert_submission_records(submission_records_to_be_added)
+        print("Length of submission_records_to_be_added: {}".format(len(submission_records_to_be_added)))
         return None
 
     def add_new_subreddit_from_input(self):
@@ -209,7 +222,9 @@ class App:
         user_choice = input("Please select a number from the above menu: ")
         try:
             result = self.command_line_actions[int(user_choice)][1]()
-            print("result: {}".format(result))
+            if (result != None):
+                for row in result:
+                    print(row)
         except KeyError:
             print("Invalid choice")
         return None
@@ -218,8 +233,6 @@ class App:
     def main(self):
         if self.use_command_line:
             self.main_menu()
-            # asyncio.gather(self.update_submissions_subscribed_to(), self.update_submission_records())
-        # else:
             # print("got here")
             # coroutine_start_time = time.time()
             # asyncio.gather(self.update_submissions_subscribed_to(), self.update_submission_records())
@@ -233,12 +246,19 @@ class App:
 
 
     def run(self):
+        self.initialize_database()
         while (not self._exit):    
+            start_time = time.time()
             self.main()
-            # print("got here")
+            sleep_time = max(0, 60 - (time.time() - start_time))
+            time.sleep(sleep_time)
         return None    
             
 if __name__ == "__main__":
-    app = App(use_command_line=True)
-    app.run()
+    use_command_line = False
+    if ( (len(sys.argv) > 1) and (sys.argv[1] == "--use-command-line") ):
+        use_command_line = True
+
+    rpgt = RPGT(use_command_line=use_command_line)
+    rpgt.run()
     
