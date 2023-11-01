@@ -18,27 +18,23 @@ class SubscribeToSubredditForm extends React.Component {
     event.preventDefault();
     const response = await fetch(`http://localhost:5000/subscribe/${event.target.value}`, {
       method: 'POST',
-      // mode: 'cors',
-      cache: 'no-cache',
-      // credentials: 'same-origin',
       headers: {
         'Content-Type': 'application/json'
       },
-      redirect: 'follow',
-      referrerPolicy: 'no-referrer',
-      // body: JSON.stringify({ "subreddits_name": this.state.value })
     });
-    // alert("Fake Subscribed to " + this.state.value);
-    
+    alert("Subscribed to " + this.state.value);
+    this.setState({value: ''});
   }
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit}>
-        <label>
+      <form className='row' onSubmit={this.handleSubmit}>
+        <label className='col-8'>
           <input id="subreddit-input-box" type="text" value={this.state.value} onChange={this.handleChange} placeholder="Add Subreddit" />
         </label>
-        <input id="subreddit-submit-button" type="submit" value="Add" />
+        <div className='col-4'>
+          <input id="subreddit-submit-button" type="submit" value="Add" />
+        </div>
       </form>
     );
   }

@@ -11,9 +11,13 @@ class SideBar extends React.Component {
 
   render() {
     return (
-      <div id="sidebar">
-        <SubscribeToSubredditForm />
-        <List subredditNames={this.props.subredditNames} />
+      <div id="sidebar" className="row">
+        <div className="no-padding col">
+          <SubscribeToSubredditForm />
+        </div>
+        <div className="no-padding col">  
+          <List subredditNames={this.props.subredditNames} />
+        </div>
       </div>
     );
   }

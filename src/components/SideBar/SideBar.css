@@ -1,12 +1,22 @@
+#sidebar {
+  /* border: solid; */
+  max-width: min-content;
+  padding-left: 5vw;
+}
+
 .subredditSelectorGroup {
     border-style: solid;
     border-width: 0.2vh;
     height: 78%;
-    /* min-width: 21vw; */
   }
   
 li {
-    /* display: block; */
-    /* font-size: 4vh; */
+    display: block;
+    border: solid 2px;
+    padding-left: 1vw;
     font-family: monospace;
+}
+
+.no-padding {
+  padding: 0;
 }

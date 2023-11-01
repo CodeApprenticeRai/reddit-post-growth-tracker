@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import './List.css';
 
 class List extends React.Component {
   constructor(props) {
