@@ -1,90 +1,206 @@
-# reddit-post-growth-tracker
+# Reddit Post Growth Tracker
 
-## Current Objectives
-1.  Create proper backend directory structure with models, services and routes. 
-2. Create database models and connection management.
-3. Extract business logic into service classes
-4. Organize API routes into proper modules.
-5. Improve configuration management.
-6. Implement proper error handling and logging.
-7. Update README with new structure.
+A modern web application that tracks how Reddit posts grow over time, featuring a clean architecture with separated concerns and improved maintainability.
 
-Rewriting the application because I feel like the first version was a bit bulky.
-I'm hoping this version is better abstracted and easier to read.  
+![Demo of UI](ui_example.png)
 
+## 🚀 Features
 
-* Choose a subreddit
-* For the chosen subreddit, get a collection of new posts. 
-* Every minute, check the score of each post gotten.
+- **Real-time Tracking**: Monitor Reddit post growth with automatic data collection
+- **Interactive Dashboard**: Visualize post statistics with interactive graphs
+- **Subreddit Management**: Subscribe to and manage multiple subreddits
+- **Modern Architecture**: Clean separation of concerns with proper MVC structure
+- **RESTful API**: Well-organized API endpoints for frontend integration
+- **Error Handling**: Comprehensive error handling and user feedback
 
+## 📁 Project Structure
 
-# Getting Started with Create React App
+```
+reddit-post-growth-tracker/
+├── backend/                    # Backend application
+│   ├── config/                # Configuration management
+│   │   ├── __init__.py
+│   │   └── settings.py         # App configuration and settings
+│   ├── database/              # Database layer
+│   │   ├── __init__.py
+│   │   └── manager.py         # Database connection and query utilities
+│   ├── models/                # Data models
+│   │   └── __init__.py       # Subreddit, Submission, SubmissionRecord models
+│   ├── routes/               # API routes
+│   │   ├── __init__.py
+│   │   ├── analytics_routes.py # Analytics and data endpoints
+│   │   └── subreddit_routes.py # Subreddit management endpoints
+│   ├── services/              # Business logic
+│   │   ├── __init__.py
+│   │   ├── reddit_service.py  # Reddit API integration
+│   │   └── analytics_service.py # Analytics and data processing
+│   └── utils/                 # Utility functions
+│       ├── __init__.py
+│       └── database_init.py   # Database initialization utilities
+├── src/                       # Frontend React application
+│   ├── components/           # React components
+│   │   ├── GraphWrapper/     # Data visualization component
+│   │   ├── List/            # Subreddit list component
+│   │   ├── SideBar/         # Sidebar navigation
+│   │   └── SubscribeToSubredditForm/ # Subscription form
+│   ├── App.js               # Main application component
+│   ├── App.css              # Application styles
+│   ├── index.js             # Application entry point
+│   └── index.css            # Global styles
+├── app.py                   # Main Flask application
+├── init_db.py              # Database initialization script
+├── tracker_service.py      # Background data collection service
+├── config.json             # Reddit API configuration
+└── README.md               # This file
+```
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 🛠️ Installation & Setup
 
-## Available Scripts
+### Prerequisites
 
-In the project directory, you can run:
+- Python 3.7+
+- Node.js 12+
+- Reddit API credentials
 
-### `npm start`
+### Backend Setup
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1. **Install Python dependencies:**
+   ```bash
+   pip install flask flask-cors praw
+   ```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+2. **Configure Reddit API:**
+   Create a `config.json` file in the project root:
+   ```json
+   {
+     "client_id": "your_reddit_client_id",
+     "client_secret": "your_reddit_client_secret",
+     "user_agent": "RedditPostGrowthTracker/1.0"
+   }
+   ```
 
-### `npm test`
+3. **Initialize the database:**
+   ```bash
+   python3 init_db.py
+   ```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+4. **Start the Flask server:**
+   ```bash
+   python3 app.py
+   ```
 
-### `npm run build`
+### Frontend Setup
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. **Install Node.js dependencies:**
+   ```bash
+   npm install
+   ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+2. **Start the development server:**
+   ```bash
+   npm start
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Background Service
 
-### `npm run eject`
+To run the data collection service:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+python3 tracker_service.py
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 🔧 API Endpoints
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Subreddit Management
+- `POST /api/subreddits/subscribe` - Subscribe to a subreddit
+- `GET /api/subreddits/` - Get all subscribed subreddits
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Analytics
+- `GET /api/analytics/submissions` - Get all submission data
+- `GET /api/analytics/submissions/<limit>` - Get submission data with limit
+- `POST /api/analytics/update-submissions` - Manually update submission data
 
-## Learn More
+### Health Check
+- `GET /health` - API health status
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 🏗️ Architecture Improvements
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Backend Architecture
 
-### Code Splitting
+1. **Separation of Concerns**: Clear separation between models, services, and routes
+2. **Database Layer**: Centralized database management with proper connection handling
+3. **Service Layer**: Business logic encapsulated in service classes
+4. **Configuration Management**: Centralized configuration with environment support
+5. **Error Handling**: Comprehensive error handling throughout the application
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Frontend Improvements
 
-### Analyzing the Bundle Size
+1. **Component Organization**: Better component structure with clear responsibilities
+2. **State Management**: Improved state handling with loading and error states
+3. **User Experience**: Better feedback with loading indicators and error messages
+4. **API Integration**: Clean API integration with proper error handling
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 🚀 Usage
 
-### Making a Progressive Web App
+1. **Start the application:**
+   - Backend: `python3 app.py`
+   - Frontend: `npm start`
+   - Background service: `python3 tracker_service.py`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+2. **Subscribe to subreddits:**
+   - Use the subscription form in the sidebar
+   - Enter subreddit names (e.g., "python", "javascript")
 
-### Advanced Configuration
+3. **View post growth:**
+   - Select subreddits from the sidebar
+   - View interactive graphs showing post statistics over time
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## 🔄 Data Collection
 
-### Deployment
+The background service (`tracker_service.py`) runs continuously to:
+- Register new submissions from subscribed subreddits
+- Record current statistics (score, upvotes, downvotes) for tracked posts
+- Maintain data freshness with 60-second intervals
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## 📊 Database Schema
 
-### `npm run build` fails to minify
+- **subscribed_subreddits**: Stores subscribed subreddit information
+- **subscribed_submissions**: Tracks individual posts being monitored
+- **submission_records**: Historical statistics for each tracked post
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 🛡️ Error Handling
+
+The application includes comprehensive error handling:
+- API validation and error responses
+- Database error handling with rollback support
+- Frontend error states with user-friendly messages
+- Graceful service shutdown handling
+
+## 🔮 Future Enhancements
+
+- [ ] Add date-created to submission schema
+- [ ] Implement data caching and memoization
+- [ ] Add more visualization options
+- [ ] Implement user authentication
+- [ ] Add export functionality
+- [ ] Mobile-responsive design improvements
+
+## 📝 Development Notes
+
+- The application follows MVC architecture principles
+- Database interactions are centralized through the DatabaseManager
+- Reddit API calls are handled through the RedditService
+- Frontend components are modular and reusable
+- Error handling is consistent across all layers
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License.

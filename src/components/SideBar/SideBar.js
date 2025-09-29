@@ -1,7 +1,5 @@
 import React from 'react';
-import SubscribeToSubredditForm from "../SubscribeToSubredditForm/SubscribeToSubredditForm";
 import List from '../List/List';
-
 import styles from "./SideBar.css"
 
 class SideBar extends React.Component {
@@ -12,11 +10,12 @@ class SideBar extends React.Component {
   render() {
     return (
       <div id="sidebar" className="row">
-        <div className="no-padding col">
-          <SubscribeToSubredditForm />
-        </div>
         <div className="no-padding col">  
-          <List subredditNames={this.props.subredditNames} />
+          <List 
+            subredditNames={this.props.subredditNames}
+            selectedSubreddit={this.props.selectedSubreddit}
+            onSubredditSelect={this.props.onSubredditSelect}
+          />
         </div>
       </div>
     );

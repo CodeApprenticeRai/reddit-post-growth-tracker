@@ -1,10 +1,15 @@
 import React from 'react';
-import  "./SubscribeToSubredditForm.css"
+import "./SubscribeToSubredditForm.css"
 
 class SubscribeToSubredditForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {value: ''};
+    this.state = {
+      value: '',
+      loading: false,
+      message: null,
+      messageType: null
+    };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -16,26 +21,68 @@ class SubscribeToSubredditForm extends React.Component {
 
   async handleSubmit(event) {
     event.preventDefault();
-    const response = await fetch(`http://localhost:5000/subscribe/${event.target.value}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    });
-    alert("Subscribed to " + this.state.value);
-    this.setState({value: ''});
+    
+    if (!this.state.value.trim()) {
+      this.setState({
+        message: 'Please enter a subreddit name',
+        messageType: 'error'
+      });
+      return;
+    }
+
+    this.setState({ loading: true, message: null });
+
+    try {
+      const result = await this.props.onSubscribe(this.state.value.trim());
+      
+      this.setState({
+        message: result.message,
+        messageType: result.success ? 'success' : 'error',
+        value: result.success ? '' : this.state.value
+      });
+    } catch (error) {
+      this.setState({
+        message: 'Failed to subscribe to subreddit',
+        messageType: 'error'
+      });
+    } finally {
+      this.setState({ loading: false });
+    }
   }
 
   render() {
+    const { value, loading, message, messageType } = this.state;
+
     return (
-      <form className='row' onSubmit={this.handleSubmit}>
-        <label className='col-8'>
-          <input id="subreddit-input-box" type="text" value={this.state.value} onChange={this.handleChange} placeholder="Add Subreddit" />
-        </label>
-        <div className='col-4'>
-          <input id="subreddit-submit-button" type="submit" value="Add" />
-        </div>
-      </form>
+      <div className="subscribe-form-container">
+        <h5>Subscribe to Subreddit</h5>
+        <form className='row' onSubmit={this.handleSubmit}>
+          <label className='col-8'>
+            <input 
+              id="subreddit-input-box" 
+              type="text" 
+              value={value} 
+              onChange={this.handleChange} 
+              placeholder="Enter subreddit name" 
+              disabled={loading}
+            />
+          </label>
+          <div className='col-4'>
+            <input 
+              id="subreddit-submit-button" 
+              type="submit" 
+              value={loading ? "Adding..." : "Add"} 
+              disabled={loading}
+            />
+          </div>
+        </form>
+        
+        {message && (
+          <div className={`message ${messageType}`}>
+            {message}
+          </div>
+        )}
+      </div>
     );
   }
 }
