@@ -1,5 +1,14 @@
 # reddit-post-growth-tracker
 
+## Current Objectives
+1.  Create proper backend directory structure with models, services and routes. 
+2. Create database models and connection management.
+3. Extract business logic into service classes
+4. Organize API routes into proper modules.
+5. Improve configuration management.
+6. Implement proper error handling and logging.
+7. Update README with new structure.
+
 Rewriting the application because I feel like the first version was a bit bulky.
 I'm hoping this version is better abstracted and easier to read.  
 
