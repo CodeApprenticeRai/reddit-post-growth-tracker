@@ -1,0 +1,29 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pytest = "*"
+pytest-cov = "*"
+black = "*"
+flake8 = "*"
+mypy = "*"
+
+[packages]
+flask = "*"
+flask-cors = "*"
+praw = "*"
+python-dotenv = "*"
+
+[requires]
+python_version = "3.9"
+
+[scripts]
+start = "python app.py"
+init-db = "python init_db.py"
+tracker = "python tracker_service.py"
+test = "pytest"
+lint = "flake8 backend/"
+format = "black backend/"
+type-check = "mypy backend/"

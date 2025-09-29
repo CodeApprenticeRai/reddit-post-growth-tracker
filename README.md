@@ -62,51 +62,129 @@ reddit-post-growth-tracker/
 - Node.js 12+
 - Reddit API credentials
 
-### Backend Setup
+### **Easy Setup (Recommended)**
+
+1. **Configure Reddit API credentials:**
+   Create a `.env` file in the project root:
+   ```bash
+   REDDIT_CLIENT_ID=your_reddit_client_id
+   REDDIT_CLIENT_SECRET=your_reddit_client_secret
+   REDDIT_USER_AGENT=RedditPostGrowthTracker/1.0
+   ```
+
+2. **Start everything with one command:**
+   ```bash
+   ./start.sh --start-frontend
+   ```
+
+The `start.sh` script handles everything automatically:
+- ✅ Detects and installs Python dependencies (pipenv or pip)
+- ✅ Installs frontend dependencies (npm install)
+- ✅ Initializes the database
+- ✅ Starts the Flask backend server
+- ✅ Starts the background data collection service
+- ✅ Starts the frontend development server (with --start-frontend)
+
+### **Manual Setup (Advanced)**
+
+If you prefer to manage dependencies manually:
 
 1. **Install Python dependencies:**
+   
+   **Option A: Using pipenv (recommended):**
    ```bash
-   pip install flask flask-cors praw
+   pipenv install
+   ```
+   
+   **Option B: Using pip:**
+   ```bash
+   pip install flask flask-cors praw python-dotenv
    ```
 
-2. **Configure Reddit API:**
-   Create a `config.json` file in the project root:
-   ```json
-   {
-     "client_id": "your_reddit_client_id",
-     "client_secret": "your_reddit_client_secret",
-     "user_agent": "RedditPostGrowthTracker/1.0"
-   }
-   ```
-
-3. **Initialize the database:**
+2. **Initialize the database:**
    ```bash
+   # Using pipenv
+   pipenv run python init_db.py
+   
+   # Or using system python
    python3 init_db.py
    ```
 
-4. **Start the Flask server:**
+3. **Start components separately:**
    ```bash
-   python3 app.py
-   ```
-
-### Frontend Setup
-
-1. **Install Node.js dependencies:**
-   ```bash
-   npm install
-   ```
-
-2. **Start the development server:**
-   ```bash
+   # Backend server
+   pipenv run python app.py  # or python3 app.py
+   
+   # Background service (in another terminal)
+   pipenv run python tracker_service.py  # or python3 tracker_service.py
+   
+   # Frontend (in another terminal)
    npm start
    ```
 
-### Background Service
+## 🚀 Start Script Features
 
-To run the data collection service:
+The `start.sh` script provides a one-command solution to get everything running:
+
+### **Automatic Features:**
+- **🔐 Credential Detection**: Automatically finds `.env` or `config.json` files
+- **📦 Dependency Management**: Detects and uses pipenv if available, falls back to pip
+- **🌐 Frontend Dependencies**: Automatically runs `npm install` if needed
+- **🗄️ Database Setup**: Initializes database if it doesn't exist
+- **🌐 Server Management**: Starts Flask backend and background service
+- **🛑 Graceful Shutdown**: Handles Ctrl+C to stop all services cleanly
+
+### **Usage:**
+```bash
+# Start backend only
+./start.sh
+
+# Start backend + frontend development server
+./start.sh --start-frontend
+
+# Build frontend for production + start backend
+./start.sh --build-frontend
+
+# Production mode (builds frontend)
+./start.sh --frontend prod
+
+# Show help
+./start.sh --help
+```
+
+### **What it does:**
+1. Checks for Reddit API credentials (`.env` or `config.json`)
+2. Installs Python dependencies automatically
+3. Initializes database if needed
+4. Starts Flask server on port 5000
+5. Starts background data collection service
+6. Provides clear status messages and error handling
+
+## 🛠️ Pipenv Scripts
+
+The project includes convenient pipenv scripts for common tasks:
 
 ```bash
-python3 tracker_service.py
+# Start the Flask server
+pipenv run start
+
+# Initialize the database
+pipenv run init-db
+
+# Run the background tracker service
+pipenv run tracker
+
+# Run tests
+pipenv run test
+
+# Run linting
+pipenv run lint
+
+# Format code
+pipenv run format
+
+# Type checking
+pipenv run type-check
 ```
 
 ## 🔧 API Endpoints
@@ -140,12 +218,42 @@ python3 tracker_service.py
 3. **User Experience**: Better feedback with loading indicators and error messages
 4. **API Integration**: Clean API integration with proper error handling
 
-## 🚀 Usage
+## 🚀 Quick Start
+
+### **Easy Setup (Recommended)**
+
+1. **Configure Reddit API credentials:**
+   Create a `.env` file in the project root:
+   ```bash
+   REDDIT_CLIENT_ID=your_reddit_client_id
+   REDDIT_CLIENT_SECRET=your_reddit_client_secret
+   REDDIT_USER_AGENT=RedditPostGrowthTracker/1.0
+   ```
+
+2. **Start everything with one command:**
+   ```bash
+   ./start.sh
+   ```
+
+3. **Start the frontend (in another terminal):**
+   ```bash
+   npm start
+   ```
+
+That's it! The `start.sh` script will automatically:
+- ✅ Install Python dependencies (using pipenv if available)
+- ✅ Initialize the database
+- ✅ Start the Flask backend server
+- ✅ Start the background data collection service
+
+### **Manual Setup (Advanced)**
+
+If you prefer to run components separately:
 
 1. **Start the application:**
-   - Backend: `python3 app.py`
+   - Backend: `python3 app.py` (or `pipenv run python app.py`)
    - Frontend: `npm start`
-   - Background service: `python3 tracker_service.py`
+   - Background service: `python3 tracker_service.py` (or `pipenv run python tracker_service.py`)
 
 2. **Subscribe to subreddits:**
    - Use the subscription form in the sidebar
