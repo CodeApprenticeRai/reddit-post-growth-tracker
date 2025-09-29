@@ -1,0 +1,12 @@
+.App {
+}
+
+.pageTitle {
+    font-family: monospace;
+    font-size: 5vh;
+    padding-bottom: 3vh;
+}
+
+.mainContent {
+    display: flex;
+}
