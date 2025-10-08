@@ -43,6 +43,15 @@ class DatabaseInitializer:
             raise
     
     @staticmethod
+    def wipe_subscribed_subreddits():
+        """Clear all subscribed subreddits."""
+        try:
+            db_manager.execute_query("DROP TABLE IF EXISTS subscribed_subreddits", fetch_all=False)
+            print("Subscribed subreddits table cleared")
+        except Exception as e:
+            print(f"Error clearing subreddits: {str(e)}")
+    
+    @staticmethod
     def wipe_subscribed_submissions():
         """Clear all subscribed submissions."""
         try:
@@ -59,7 +68,7 @@ class DatabaseInitializer:
             print("Submission records table cleared")
         except Exception as e:
             print(f"Error clearing records: {str(e)}")
-    
+
     @staticmethod
     def cache_database_state(cache_path: str = None):
         """Backup the current cache file."""

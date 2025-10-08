@@ -133,6 +133,42 @@ else
     PYTHON_CMD="python3"
 fi
 
+# Function to find npm command
+find_npm() {
+	# If npm is in PATH
+	if command -v npm &> /dev/null; then
+		echo "npm"
+		return 0
+	fi
+
+	# Try common locations
+	local common_paths=(
+		"/usr/local/bin/npm"
+		"/opt/homebrew/bin/npm"
+		"$HOME/.nvm/versions/node/*/bin/npm"
+	)
+
+	for path_pattern in "${common_paths[@]}"; do
+		for path in $path_pattern; do
+			if [ -f "$path" ]; then
+				echo "$path"
+				return 0
+			fi
+		done
+	done
+
+	# Try nvm if available in current shell
+	if [ -s "$HOME/.nvm/nvm.sh" ]; then
+		. "$HOME/.nvm/nvm.sh"
+		if command -v npm &> /dev/null; then
+			echo "npm"
+			return 0
+		fi
+	fi
+
+	return 1
+}
+
 # Initialize database if needed
 if [ ! -f "db/data.db" ]; then
     echo "📊 Initializing database..."
@@ -156,10 +192,38 @@ SERVICE_PID=$!
 FRONTEND_PID=""
 if [ "$FRONTEND_MODE" = "prod" ] || [ "$BUILD_FRONTEND" = true ] || [ "$START_FRONTEND" = true ] || [ "$FRONTEND_MODE" = "dev" ]; then
     if [ -f "package.json" ]; then
+		# Ensure npm is available (install Node.js if necessary)
+		NPM_CMD=$(find_npm)
+		if [ $? -ne 0 ]; then
+			echo "🧰 npm not found. Attempting to install Node.js..."
+			if command -v brew &> /dev/null; then
+				echo "🍺 Installing Node.js via Homebrew..."
+				brew install node || true
+			else
+				echo "❌ Homebrew not found. Please install Node.js manually from https://nodejs.org or install Homebrew from https://brew.sh"
+				echo "⚠️  Skipping frontend operations"
+				FRONTEND_MODE="none"
+			fi
+
+			# Re-check for npm after attempted install
+			NPM_CMD=$(find_npm)
+			if [ $? -ne 0 ]; then
+				echo "❌ npm still not available. Frontend will be skipped."
+				FRONTEND_MODE="none"
+			fi
+		fi
+
+		# Proceed only if frontend isn't disabled
+		if [ "$FRONTEND_MODE" != "none" ]; then
         # Check if node_modules exists, if not install dependencies
         if [ ! -d "node_modules" ]; then
             echo "📦 Installing frontend dependencies..."
-            npm install
+            if [ -f "package-lock.json" ]; then
+				echo "🔒 Lockfile detected. Using npm ci..."
+				$NPM_CMD ci
+			else
+				$NPM_CMD install
+			fi
             if [ $? -eq 0 ]; then
                 echo "✅ Frontend dependencies installed successfully!"
             else
@@ -174,7 +238,7 @@ if [ "$FRONTEND_MODE" = "prod" ] || [ "$BUILD_FRONTEND" = true ] || [ "$START_FR
         # Build frontend if in production mode
         if [ "$FRONTEND_MODE" = "prod" ] || [ "$BUILD_FRONTEND" = true ]; then
             echo "🏗️  Building frontend for production..."
-            npm run build
+            $NPM_CMD run build
             if [ $? -eq 0 ]; then
                 echo "✅ Frontend built successfully!"
             else
@@ -185,10 +249,11 @@ if [ "$FRONTEND_MODE" = "prod" ] || [ "$BUILD_FRONTEND" = true ] || [ "$START_FR
         # Start frontend development server
         if [ "$START_FRONTEND" = true ] || [ "$FRONTEND_MODE" = "dev" ]; then
             echo "🌐 Starting frontend development server..."
-            npm start &
+            $NPM_CMD start &
             FRONTEND_PID=$!
             echo "✅ Frontend development server started (PID: $FRONTEND_PID)"
         fi
+		fi
     else
         echo "⚠️  No package.json found, skipping frontend operations"
     fi
@@ -196,11 +261,11 @@ fi
 
 echo ""
 echo "✅ Application started successfully!"
-echo "🔗 Backend API: http://localhost:5000"
+echo "🔗 Backend API: http://localhost:5001"
 echo "📊 Background service: Running (PID: $SERVICE_PID)"
 
 if [ -n "$FRONTEND_PID" ]; then
-    echo "📱 Frontend: http://localhost:3000 (PID: $FRONTEND_PID)"
+    echo "📱 Frontend: http://localhost:5173 (PID: $FRONTEND_PID)"
 elif [ "$FRONTEND_MODE" = "prod" ] || [ "$BUILD_FRONTEND" = true ]; then
     echo "📱 Frontend: Built and ready to serve"
 else

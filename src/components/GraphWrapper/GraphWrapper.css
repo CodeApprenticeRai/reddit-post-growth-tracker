@@ -1,4 +1,28 @@
-graphWrapper {
+#graph-wrapper {
     min-width: 70vw;
     min-height: 100vh;
-  }
+}
+
+#graph-subreddit-name-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.graph-no-data {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    font-size: 1.2em;
+    color: #666;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#graph {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}

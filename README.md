@@ -156,7 +156,7 @@ The `start.sh` script provides a one-command solution to get everything running:
 1. Checks for Reddit API credentials (`.env` or `config.json`)
 2. Installs Python dependencies automatically
 3. Initializes database if needed
-4. Starts Flask server on port 5000
+4. Starts Flask server on port 5001
 5. Starts background data collection service
 6. Provides clear status messages and error handling
 

@@ -15,6 +15,7 @@ def main():
     if len(sys.argv) > 1 and sys.argv[1] == '--reset':
         print("Resetting database...")
         DatabaseInitializer.cache_database_state()
+        DatabaseInitializer.wipe_subscribed_subreddits()
         DatabaseInitializer.wipe_subscribed_submissions()
         DatabaseInitializer.wipe_submission_records()
     

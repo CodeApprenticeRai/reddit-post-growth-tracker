@@ -1,7 +1,8 @@
 import React from 'react';
-import SideBar from './components/SideBar/SideBar';
-import GraphWrapper from './components/GraphWrapper/GraphWrapper';
-import SubscribeToSubredditForm from './components/SubscribeToSubredditForm/SubscribeToSubredditForm';
+import SideBar from './components/SideBar/SideBar.jsx';
+import GraphWrapper from './components/GraphWrapper/GraphWrapper.jsx';
+import SubscribeToSubredditForm from './components/SubscribeToSubredditForm/SubscribeToSubredditForm.jsx';
+import { buildApiUrl } from './config/api.js';
 import './App.css';
 
 class App extends React.Component {
@@ -9,7 +10,7 @@ class App extends React.Component {
     super(props);
     this.state = {
       "subreddits": {},
-      "selectedSubreddit": "",
+      "selectedSubredditName": "",
       "loading": true,
       "error": null
     }
@@ -22,7 +23,7 @@ class App extends React.Component {
     try {
       this.setState({ loading: true, error: null });
       
-      const response = await fetch('http://localhost:5000/api/analytics/submissions/300', {
+      const response = await fetch(buildApiUrl('ANALYTICS_SUBMISSIONS', '300'), {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -37,18 +38,18 @@ class App extends React.Component {
       console.log('Loaded subreddits data:', data);
 
       const subredditNames = Object.keys(data);
-      const selectedSubreddit = subredditNames.length > 0 ? subredditNames[0] : "";
+      const selectedSubredditName = subredditNames.length > 0 ? subredditNames[0] : "";
 
       this.setState({
         "subreddits": data,
-        "selectedSubreddit": selectedSubreddit,
+        "selectedSubredditName": selectedSubredditName,
         "loading": false
       });
     } catch (error) {
       console.error('Error loading subreddits data:', error);
       this.setState({
         "subreddits": {},
-        "selectedSubreddit": "",
+        "selectedSubredditName": "",
         "loading": false,
         "error": error.message
       });
@@ -57,7 +58,7 @@ class App extends React.Component {
 
   async handleSubredditSubscription(subredditName) {
     try {
-      const response = await fetch('http://localhost:5000/api/subreddits/subscribe', {
+      const response = await fetch(buildApiUrl('SUBREDDIT_SUBSCRIBE'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -94,7 +95,7 @@ class App extends React.Component {
   }
 
   render(){
-    const { subreddits, selectedSubreddit, loading, error } = this.state;
+    const { subreddits, selectedSubredditName, loading, error } = this.state;
     
     if (loading) {
       return (
@@ -136,7 +137,7 @@ class App extends React.Component {
     }
 
     const subredditNames = Object.keys(subreddits);
-    const selectedSubredditData = subreddits[selectedSubreddit];
+    const selectedSubredditData = subredditNames.length > 0 ? subreddits[selectedSubredditName] : {};
 
     return (
       <div className="App container">
@@ -148,14 +149,14 @@ class App extends React.Component {
             <SubscribeToSubredditForm onSubscribe={this.handleSubredditSubscription} />
             <SideBar 
               subredditNames={subredditNames} 
-              selectedSubreddit={selectedSubreddit}
-              onSubredditSelect={(name) => this.setState({ selectedSubreddit: name })}
+              selectedSubredditName={selectedSubredditName}
+              onSubredditSelect={(name) => this.setState({ selectedSubredditName: name })}
             />
           </div>
           <div className='col-md-9'>
             <GraphWrapper 
-              selectedSubreddit={selectedSubredditData} 
-              selectedSubredditName={selectedSubreddit}
+              selectedSubredditData={selectedSubredditData} 
+              selectedSubredditName={selectedSubredditName}
             />
           </div>
         </div>

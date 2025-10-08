@@ -1,6 +1,6 @@
 import React from 'react';
 import List from '../List/List';
-import styles from "./SideBar.css"
+import "./SideBar.css"
 
 class SideBar extends React.Component {
   constructor(props) {
@@ -13,7 +13,7 @@ class SideBar extends React.Component {
         <div className="no-padding col">  
           <List 
             subredditNames={this.props.subredditNames}
-            selectedSubreddit={this.props.selectedSubreddit}
+            selectedSubredditName={this.props.selectedSubredditName}
             onSubredditSelect={this.props.onSubredditSelect}
           />
         </div>

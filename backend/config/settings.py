@@ -23,7 +23,7 @@ class Config:
     
     # Application settings
     DEBUG = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
-    CORS_ORIGINS = os.getenv('CORS_ORIGINS', "http://localhost:3000,http://127.0.0.1:3000").split(',')
+    CORS_ORIGINS = os.getenv('CORS_ORIGINS', "http://localhost:5173,http://127.0.0.1:5173").split(',')
     
     # Reddit API credentials from environment variables
     REDDIT_CLIENT_ID = os.getenv('REDDIT_CLIENT_ID')
